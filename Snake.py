@@ -1,4 +1,6 @@
 import curses
+import sys
+
 # Initial user interface: Curses
 #initializes curses to use it
 curses.initscr()
@@ -26,11 +28,22 @@ win.keypad(True)
 
 APPLE = 0
 POINT = 0
+board = []
+SNAKE = []
 
-while (1):
-    win.border(0)
-    win.addch(0, 3, 'P')
-    event = win.getch()
+def intro():
+    print("Welcome to the Snake game. Before we start, you can customerize the game by seting the board height, width. ")
+    the_input = input('Please type the height and width here, separated by a space. Press enter if you want the default size')
+    if the_input:
+        input_list = the_input.split( )
+    else:
+        input_list = []
+
+def play() :
+    while (1):
+        win.border(0)
+        win.addch(0, 3, 'P')
+        event = win.getch()
 
 #function to run the snake with BFSS
 def runBFS():
