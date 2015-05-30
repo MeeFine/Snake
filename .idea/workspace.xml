@@ -36,8 +36,8 @@
       <file leaf-file-name="Snake-game.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Snake-game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6296296">
-              <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.40329218">
+              <caret line="81" column="41" selection-start-line="81" selection-start-column="41" selection-end-line="81" selection-end-column="41" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -82,8 +82,8 @@
     <order />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="1350" />
-    <option name="y" value="44" />
+    <option name="x" value="1130" />
+    <option name="y" value="213" />
     <option name="width" value="1118" />
     <option name="height" value="826" />
   </component>
@@ -323,7 +323,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1350" y="44" width="1118" height="826" extended-state="0" />
+    <frame x="1130" y="213" width="1118" height="826" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.34973165" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -447,8 +447,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Snake-game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6296296">
-          <caret line="92" column="0" selection-start-line="92" selection-start-column="0" selection-end-line="92" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.40329218">
+          <caret line="81" column="41" selection-start-line="81" selection-start-column="41" selection-end-line="81" selection-end-column="41" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>

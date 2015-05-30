@@ -14,7 +14,7 @@ highestScore = 0
 def game(highestScore):
     originalLength = 3
     screen.nodelay(1)
-    head = [1, 1]
+    head = [5, 1]
     foodMade = False
     currentScore = 0
     #default body size = 3
@@ -28,14 +28,17 @@ def game(highestScore):
     gameOver = False
 
     while not gameOver:
+        # randomly generates the food
         while not foodMade:
             y, x = random.randrange(1, dims[0] -1),random.randrange(1, dims[1] -1)
             if screen.inch(y,x) == ord(' '):
                 foodMade = True
                 screen.addch(y,x, '@')
+        # get rid of the previous body
         if (previousBody not in body):
             screen.addch(previousBody[0], previousBody[1], ' ')
         screen.addch(head[0], head[1], '*')
+        #get the keypad input from the user
         action = screen.getch()
 
         if ((action == curses.KEY_UP or action == ord('w')) and direction != 1):
@@ -46,7 +49,7 @@ def game(highestScore):
             direction = 0
         elif ((action == curses.KEY_LEFT or action == ord('a')) and direction != 0):
             direction = 2
-
+        # updates the snake head
         if (direction == 0):
             head[1] += 1
         elif (direction == 1):
@@ -71,10 +74,12 @@ def game(highestScore):
         screen.refresh()
         time.sleep(0.09)
     currentScore = str(len(body)-originalLength)
+    # keep track of the maximum score
     if(currentScore > highestScore):
         highestScore = currentScore
     screen.clear()
     screen.nodelay(0)
+    # some messages at the game over page
     message1 = 'Game over'
     stringMessage = ''
     if currentScore <= 1:
@@ -93,6 +98,7 @@ def game(highestScore):
 
     screen.refresh()
     q = 0
+    #32 - space; 10 - enter
     while q not in [32, 10]:
         q = screen.getch()
     if q == 32:
