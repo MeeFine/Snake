@@ -4,25 +4,49 @@ import random
 import sys
 from copy import copy
 
+
 screen = curses.initscr()
+screen.keypad(1)
+curses.noecho()
+curses.curs_set(0)
 dims = screen.getmaxyx()
 def game():
+    originalLength = 3
+    highestScore = 0
     screen.nodelay(1)
     head = [1, 1]
+    foodMade = False
     score = 0
     #default body size = 3
-    body = copy(head)
-    body = body * 3
-
+    body = []
+    for i in range(originalLength):
+        body.append(head)
     screen.border()
-    previous = copy(body[-1])
+    previousBody = copy(body[-1])
+    #print(previous)
     direction = 0 # 0: right, 1: down, 2: left, 3: up
     gameOver = False
 
     while not gameOver:
-        if (previous not in body):
-            screen.addch(previous[0], previous[1], ' ')
+        while not foodMade:
+            y, x = random.randrange(1, dims[0] -1),random.randrange(1, dims[1] -1)
+            if screen.inch(y,x) == ord(' '):
+                foodMade = True
+                screen.addch(y,x, '@')
+        if (previousBody not in body):
+            screen.addch(previousBody[0], previousBody[1], ' ')
         screen.addch(head[0], head[1], '*')
+        action = screen.getch()
+
+        if ((action == curses.KEY_UP or action == ord('w')) and direction != 1):
+            direction = 3
+        elif ((action == curses.KEY_DOWN or action == ord('s')) and direction != 3):
+            direction = 1
+        elif ((action == curses.KEY_RIGHT or action == ord('d')) and direction != 2):
+            direction = 0
+        elif ((action == curses.KEY_LEFT or action == ord('a')) and direction != 0):
+            direction = 2
+
         if (direction == 0):
             head[1] += 1
         elif (direction == 1):
@@ -35,11 +59,36 @@ def game():
         previousBody = copy(body[-1])
         for i in range(len(body)-1, 0, -1):
             body[i] = copy(body[i-1])
+
+        body[0] = copy(head)
         # if it touches something other than the space, then game over
         if screen.inch(head[0], head[1]) != ord(' '):
-            gameOver = True
+            if screen.inch(head[0], head[1]) == ord('@'):
+                foodMade = False
+                body.append(body[-1])
+            else:
+                gameOver = True
         screen.refresh()
-        time.sleep(0.1)
+        time.sleep(0.09)
+    currentScore = str(len(body)-originalLength)
+    if(currentScore > highestScore):
+        highestScore = currentScore
+    screen.clear()
+    screen.nodelay(0)
+    message1 = 'Game over'
+    message2 = 'You got ' + currentScore + 'points. '
+    message3 = 'Highest score: ' + highestScore
+    message4 = 'Press enter to quit'
+    message5 = 'press space to play again. '
+    screen.addstr(dims[0]/2, dims[1]/2 - len(message1), message1)
+    screen.addstr(dims[0]/2 + 1, dims[1]/2 - len(message2), message2)
+    screen.addstr(dims[0]/2 + 2, dims[1]/2 - len(message3), message3)
+    screen.addstr(dims[0]/2 + 3, dims[1]/2 - len(message4), message4)
+    screen.addstr(dims[0]/2 + 4, dims[1]/2 - len(message5), message5)
+    screen.refresh()
+
+
+
 
 game()
 curses.endwin()
