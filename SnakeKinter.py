@@ -25,7 +25,7 @@ class snakeGame:
         button = Button(inputs, text="Run", command=lambda : self.getInput(wi, hi))
         button.grid(row=0, column=4)
 
-        self.board = Canvas
+        self.board = Canvas(master, width=width, height=height)
         inputs.pack(side="top")
 
     def getInput(wi, hi):
