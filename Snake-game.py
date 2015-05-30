@@ -10,13 +10,13 @@ screen.keypad(1)
 curses.noecho()
 curses.curs_set(0)
 dims = screen.getmaxyx()
-def game():
+highestScore = 0
+def game(highestScore):
     originalLength = 3
-    highestScore = 0
     screen.nodelay(1)
     head = [1, 1]
     foodMade = False
-    score = 0
+    currentScore = 0
     #default body size = 3
     body = []
     for i in range(originalLength):
@@ -76,19 +76,30 @@ def game():
     screen.clear()
     screen.nodelay(0)
     message1 = 'Game over'
-    message2 = 'You got ' + currentScore + 'points. '
+    stringMessage = ''
+    if currentScore <= 1:
+        stringMessage += ' point. '
+    elif currentScore > 1:
+        stringMessage += ' points. '
+    message2 = 'You got ' + currentScore + stringMessage
     message3 = 'Highest score: ' + highestScore
     message4 = 'Press enter to quit'
     message5 = 'press space to play again. '
-    screen.addstr(dims[0]/2, dims[1]/2 - len(message1), message1)
-    screen.addstr(dims[0]/2 + 1, dims[1]/2 - len(message2), message2)
-    screen.addstr(dims[0]/2 + 2, dims[1]/2 - len(message3), message3)
-    screen.addstr(dims[0]/2 + 3, dims[1]/2 - len(message4), message4)
-    screen.addstr(dims[0]/2 + 4, dims[1]/2 - len(message5), message5)
+    screen.addstr(dims[0]/2 - 3, (dims[1]-len(message1))/2, message1)
+    screen.addstr(dims[0]/2 - 2, (dims[1]-len(message2))/2, message2)
+    screen.addstr(dims[0]/2 - 1, (dims[1]-len(message3))/2, message3)
+    screen.addstr(dims[0]/2, (dims[1]-len(message4))/2, message4)
+    screen.addstr(dims[0]/2 + 1, (dims[1]-len(message5))/2, message5)
+
     screen.refresh()
+    q = 0
+    while q not in [32, 10]:
+        q = screen.getch()
+    if q == 32:
+        screen.clear()
+        game(highestScore)
 
 
 
-
-game()
+game(highestScore)
 curses.endwin()
