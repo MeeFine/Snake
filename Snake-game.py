@@ -12,6 +12,7 @@ curses.curs_set(0)
 dims = screen.getmaxyx()
 highestScore = 0
 def game(highestScore):
+    screen.clear()
     originalLength = 3
     screen.nodelay(1)
     head = [5, 2]
@@ -81,7 +82,7 @@ def game(highestScore):
             else:
                 gameOver = True
         screen.refresh()
-        time.sleep(1)
+        time.sleep(0.1)
     currentScore = len(body)-originalLength
     # keep track of the maximum score
     if(currentScore > highestScore):
@@ -113,10 +114,37 @@ def game(highestScore):
     while q not in [32, 10]:
         q = screen.getch()
     if q == 32:
-        screen.clear()
+        #screen.clear()
         game(highestScore)
+def menu():
+    screen.nodelay(0)
+    screen.clear()
+    selection = -1
+    option = 0
+    while (selection < 0):
+        graphics = [0]*3
+        graphics[option] = curses.A_REVERSE
+        welcomeString = 'Welcome to the Snake game.'
+        screen.addstr(5, (dims[1]-len(welcomeString))//2, welcomeString)
+        screen.addstr(dims[0]//2 - 2, dims[1]//2 - 12, 'User Controlled Play Mode', graphics[0])
+        screen.addstr(dims[0]//2 - 1, dims[1]//2 - 8, 'Auto Play Mode', graphics[1])
+        screen.addstr(dims[0]//2 , dims[1]//2 - 5, 'Exit', graphics[2])
+        screen.refresh()
+        action = screen.getch()
+        if (action == curses.KEY_UP):
+            option = (option -1) % 3
+        elif (action == curses.KEY_DOWN):
+            option = (option + 1) % 3
+        elif action == ord('\n'):
+            selection = option
+
+    if (selection == 0):
+        game(highestScore)
+        screen.clear()
 
 
-
-game(highestScore)
+        # screen.addstr(dims[0]/2 - 2, dims[1]/2-2, , graphics[0])
+        # screen.addstr(dims[0]/2 - 2, dims[1]/2-2, , graphics[0])
+menu()
+#game(highestScore)
 curses.endwin()
