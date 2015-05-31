@@ -73,7 +73,7 @@ def game(highestScore):
                 gameOver = True
         screen.refresh()
         time.sleep(0.09)
-    currentScore = str(len(body)-originalLength)
+    currentScore = len(body)-originalLength
     # keep track of the maximum score
     if(currentScore > highestScore):
         highestScore = currentScore
@@ -86,15 +86,17 @@ def game(highestScore):
         stringMessage += ' point. '
     elif currentScore > 1:
         stringMessage += ' points. '
-    message2 = 'You got ' + currentScore + stringMessage
-    message3 = 'Highest score: ' + highestScore
+    currentScoreString = str(currentScore)
+    highestScoreString = str(highestScore)
+    message2 = 'You got ' + currentScoreString + stringMessage
+    message3 = 'Highest score: ' + highestScoreString
     message4 = 'Press enter to quit'
     message5 = 'press space to play again. '
-    screen.addstr(dims[0]/2 - 3, (dims[1]-len(message1))/2, message1)
-    screen.addstr(dims[0]/2 - 2, (dims[1]-len(message2))/2, message2)
-    screen.addstr(dims[0]/2 - 1, (dims[1]-len(message3))/2, message3)
-    screen.addstr(dims[0]/2, (dims[1]-len(message4))/2, message4)
-    screen.addstr(dims[0]/2 + 1, (dims[1]-len(message5))/2, message5)
+    screen.addstr(dims[0]//2 - 3, (dims[1]-len(message1))//2, message1)
+    screen.addstr(dims[0]//2 - 2, (dims[1]-len(message2))//2, message2)
+    screen.addstr(dims[0]//2 - 1, (dims[1]-len(message3))//2, message3)
+    screen.addstr(dims[0]//2, (dims[1]-len(message4))//2, message4)
+    screen.addstr(dims[0]//2 + 1, (dims[1]-len(message5))//2, message5)
 
     screen.refresh()
     q = 0
