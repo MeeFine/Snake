@@ -2,7 +2,7 @@ import curses
 import time
 import random
 import sys
-from copy import copy
+from copy import copy, deepcopy
 
 
 screen = curses.initscr()
@@ -14,10 +14,12 @@ highestScore = 0
 def game(highestScore):
     originalLength = 3
     screen.nodelay(1)
-    head = [5, 1]
+    head = [5, 2]
+    headCopy = deepcopy(head)
     foodMade = False
     currentScore = 0
     #default body size = 3
+    count = 0
     body = []
     for i in range(originalLength):
         body.append(head)
@@ -28,15 +30,22 @@ def game(highestScore):
     gameOver = False
 
     while not gameOver:
+        if(count < originalLength+2):
+            count += 1
         # randomly generates the food
         while not foodMade:
             y, x = random.randrange(1, dims[0] -1),random.randrange(1, dims[1] -1)
             if screen.inch(y,x) == ord(' '):
                 foodMade = True
                 screen.addch(y,x, '@')
+        if (count == originalLength+1):
+            screen.addch(headCopy[0], headCopy[1], ' ')
         # get rid of the previous body
         if (previousBody not in body):
+            #screen.addch(5, 2, ' ')
             screen.addch(previousBody[0], previousBody[1], ' ')
+
+
         screen.addch(head[0], head[1], '*')
         #get the keypad input from the user
         action = screen.getch()
@@ -72,7 +81,7 @@ def game(highestScore):
             else:
                 gameOver = True
         screen.refresh()
-        time.sleep(0.09)
+        time.sleep(1)
     currentScore = len(body)-originalLength
     # keep track of the maximum score
     if(currentScore > highestScore):
