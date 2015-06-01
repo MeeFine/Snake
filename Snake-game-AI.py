@@ -9,6 +9,9 @@ curses.noecho()
 curses.curs_set(0)
 dims = screen.getmaxyx()
 
+
+MOVE = [0, 1, 2, 3] # 0: right, 1: down, 2: left, 3: up
+
 def gameAI():
     screen.clear()
     originalLength = 3
@@ -16,6 +19,7 @@ def gameAI():
     head = [3, 50]
     headCopy = deepcopy(head)
     foodMade = False
+    food = []
     currentScore = 0
     #default body size = 3
     count = 0
@@ -38,6 +42,8 @@ def gameAI():
             if screen.inch(y,x) == ord(' '):
                 foodMade = True
                 screen.addch(y,x, '@')
+                food[0] = y
+                food[1] = x
         if (count == originalLength+1):
             screen.addch(headCopy[0], headCopy[1], ' ')
         # get rid of the previous body
@@ -61,22 +67,6 @@ def gameAI():
         # updates the snake head
 
         # right
-        if (screen.inch(head[0], head[1] + 1) != ord(' ') and screen.inch(head[0] + 1, head[1]) != ord(' ') and direction == 0 and head[1] < dims[1]-1):
-            direction = 3
-        elif (screen.inch(head[0], head[1] + 1) != ord(' ') and screen.inch(head[0] - 1, head[1]) == ord(' ') and direction == 0):
-            direction = 1
-        elif (screen.inch(head[0] + 1, head[1]) != ord(' ') and screen.inch(head[0], head[1] + 1) != ord(' ') and direction == 1):
-            direction = 2
-        elif (screen.inch(head[0] + 1, head[1]) != ord(' ') and screen.inch(head[0], head[1] - 1) != ord(' ') and direction == 1):
-            direction = 0
-        elif (screen.inch(head[0], head[1] - 1) != ord(' ') and screen.inch(head[0] - 1, head[1]) != ord(' ') and direction == 2):
-            direction = 1
-        elif (screen.inch(head[0], head[1] - 1) != ord(' ') and screen.inch(head[0] + 1, head[1]) != ord(' ') and direction == 2):
-            direction = 3
-        elif (screen.inch(head[0] - 1, head[1]) != ord(' ') and screen.inch(head[0], head[1] + 1) != ord(' ') and direction == 3):
-            direction = 2
-        elif (screen.inch(head[0] - 1, head[1]) != ord(' ') and screen.inch(head[0], head[1] - 1) != ord(' ') and direction == 3):
-            direction = 0
 
 
         if (direction == 0):
@@ -137,6 +127,37 @@ def gameAI():
     # if q == 32:
     #     #screen.clear()
     #     game(highestScore)
+def is_safe(head, direction):
+    if (direction == 0):
+        if (screen.inch(head[0], head[1] + 1) != ord(' ')):
+            return False
+        else:
+            return True
+    elif (direction == 1):
+        if (screen.inch(head[0], head[1] + 1)) != ord(' '):
+            return False
+        else:
+            return True
+    elif(direction == 2):
+        if (screen.inch(head[0], head[1] - 1)) != ord(' '):
+            return False
+        else:
+            return True
+    elif (direction == 3):
+        if (screen.inch(head[0] - 1, head[1])) != ord(' '):
+            return False
+        else:
+            return True
+
+def runBFS(head):
+    OPEN = []
+    CLOSE = []
+    findApple = False
+    OPEN.append(head)
+    while(OPEN != []):
+        idx = OPEN[0]
+
+
 
 
 gameAI()
