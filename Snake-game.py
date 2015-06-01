@@ -4,7 +4,8 @@ import random
 import sys
 from copy import copy, deepcopy
 
-
+# for the transparency purposes
+steps = []
 screen = curses.initscr()
 screen.keypad(1)
 curses.noecho()
@@ -102,20 +103,24 @@ def game(highestScore):
     message3 = 'Highest score: ' + highestScoreString
     message4 = 'Press enter to quit'
     message5 = 'press space to play again. '
+    message6 = 'press M to go back to main menu. '
     screen.addstr(dims[0]//2 - 3, (dims[1]-len(message1))//2, message1)
     screen.addstr(dims[0]//2 - 2, (dims[1]-len(message2))//2, message2)
     screen.addstr(dims[0]//2 - 1, (dims[1]-len(message3))//2, message3)
     screen.addstr(dims[0]//2, (dims[1]-len(message4))//2, message4)
     screen.addstr(dims[0]//2 + 1, (dims[1]-len(message5))//2, message5)
+    screen.addstr(dims[0]//2 + 2, (dims[1]-len(message6))//2, message6)
 
     screen.refresh()
     q = 0
     #32 - space; 10 - enter
-    while q not in [32, 10]:
+    while q not in [77, 109, 32, 10]:
         q = screen.getch()
     if q == 32:
         #screen.clear()
         game(highestScore)
+    elif q in [77, 109]:
+        menu()
 def menu():
     screen.nodelay(0)
     screen.clear()
@@ -142,9 +147,10 @@ def menu():
         game(highestScore)
         screen.clear()
 
+def showSteps():
+    screen.clear()
+    screen.nodelay(0)
 
-        # screen.addstr(dims[0]/2 - 2, dims[1]/2-2, , graphics[0])
-        # screen.addstr(dims[0]/2 - 2, dims[1]/2-2, , graphics[0])
 menu()
 #game(highestScore)
 curses.endwin()
