@@ -10,7 +10,7 @@ curses.curs_set(0)
 dims = screen.getmaxyx()
 
 
-MOVE = [0, 1, 2, 3] # 0: right, 1: down, 2: left, 3: up
+MOVE = [[0, 1], [1, 0], [0, -1], [-1, 0]] # 0: right, 1: down, 2: left, 3: up
 
 def gameAI():
     screen.clear()
@@ -24,6 +24,7 @@ def gameAI():
     #default body size = 3
     count = 0
     body = []
+    BOARD = []
     for i in range(originalLength):
         body.append(head)
     screen.border()
@@ -127,6 +128,7 @@ def gameAI():
     # if q == 32:
     #     #screen.clear()
     #     game(highestScore)
+
 def is_safe(head, direction):
     if (direction == 0):
         if (screen.inch(head[0], head[1] + 1) != ord(' ')):
@@ -149,13 +151,26 @@ def is_safe(head, direction):
         else:
             return True
 
-def runBFS(head):
+def runBFS(BOARD, apple, head, direction):
     OPEN = []
     CLOSE = []
     findApple = False
-    OPEN.append(head)
+    OPEN.append(apple)
     while(OPEN != []):
         idx = OPEN[0]
+        del OPEN[0]
+        for i in range(4):
+            if (is_safe(idx, direction)):
+                if (idx[0] + MOVE[i][0] == head[0] and idx[1] + MOVE[i][1] == head[1]):
+                    findApple = True
+                elif (BOARD[idx[0] + MOVE[i][0], idx[1] + MOVE[i][1]] == ord(' ') ):
+
+
+
+
+    OPEN.append(idx[0] + MOVE[i][0], idx[1] + MOVE[i][1])
+
+
 
 
 
