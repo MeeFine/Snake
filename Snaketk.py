@@ -31,7 +31,7 @@ class SnakeGame:
         self.hentry.insert(0, "50")
 
         self.button = Button(self.frame, text="Run / Restart", command=self.start)
-        self.button.pack() #grid(row=0, column=4)
+        self.button.pack()
 
         self.root.mainloop()
 
@@ -82,9 +82,9 @@ class SnakeGame:
             self.head = (self.head[0] + 1, self.head[1])
         elif self.di == "W" and self.head[0] != 0:
             self.head = (self.head[0] - 1, self.head[1])
-        elif self.di == "N" and self.head[1] != self.height:
+        elif self.di == "N" and self.head[1] != 0:
             self.head = (self.head[0], self.head[1] - 1)
-        elif self.di == "S" and self.head[1] != 0:
+        elif self.di == "S" and self.head[1] != self.height:
             self.head = (self.head[0], self.head[1] + 1)
         else:
             self.end()
