@@ -9,9 +9,9 @@ class SnakeGame:
         self.root = Tk()
         self.Run = False
 
-        self.width = 100
-        self.height = 100
-        self.bsize = 5
+        self.width = 50
+        self.height = 50
+        self.bsize = 10
         self.size = 6
         self.speed = 300
 
@@ -22,13 +22,15 @@ class SnakeGame:
         self.canvas.pack()
 
         self.wlabel = Label(self.frame, fg="black", text="Width")
-        self.wlabel.pack(side="left") #grid(row=0, column=0)
+        self.wlabel.pack(side="left")
         self.wentry = Entry(self.frame)
-        self.wentry.pack(side="left") #grid(row=0, column=1)
+        self.wentry.pack(side="left")
+        self.wentry.insert(0, "50")
         self.hlabel = Label(self.frame, fg="black", text="Height")
-        self.hlabel.pack(side="left") #grid(row=0, column=2)
+        self.hlabel.pack(side="left")
         self.hentry = Entry(self.frame)
-        self.hentry.pack(side="left") #grid(row=0, column=3)
+        self.hentry.pack(side="left")
+        self.hentry.insert(0, "50")
 
         self.button = Button(self.frame, text="RUN!", command=self.start)
         self.button.pack() #grid(row=0, column=4)
@@ -42,8 +44,13 @@ class SnakeGame:
 
         self.body = []
         self.chunks = []
-        self.di = "N"
-
+        self.di = "E"
+        new_w = eval(self.wentry.get())
+        new_h = eval(self.hentry.get())
+        if new_w != self.width or new_h != self.height:
+            self.width = new_w
+            self.height = new_h
+            self.canvas.config(width=self.width*self.bsize, height=self.height*self.bsize)
         self.head = (self.width // 2, self.height // 2)
         for i in range(self.size):
             self.chunks.append((self.head[0]-i, self.head[1]))
@@ -88,6 +95,7 @@ class SnakeGame:
         else:
             self.create_food()
             self.size += 1
+            print(self.size)
 
     def paint(self):
         self.canvas.delete(ALL)
