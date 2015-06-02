@@ -1,87 +1,103 @@
-__author__ = 'ziming3'
 from tkinter import *
 from random import *
 import time
 
 width = 100
 height = 100
+boxsize = 5
+speed = 100
 
-class snakeGame:
+class SnakeGame:
     def __init__(self):
-        master = Tk()
+        self.master = Tk()
         self.RUN = False
         # Control Center
-        inputs = Frame(master)
-        label_wid = Label(inputs, text="Width")
+        inputs = Frame(self.master)
         label_hei = Label(inputs, text="Height")
+        label_wid = Label(inputs, text="Width")
         self.entry_wid = Entry(inputs)
         self.entry_hei = Entry(inputs)
         self.entry_wid.insert(0, "100")
         self.entry_hei.insert(0, "100")
-        label_hei.grid(row=0, column=0)
-        self.entry_hei.grid(row=0, column=1)
-        label_wid.grid(row=0, column=2)
-        self.entry_wid.grid(row=0, column=3)
-        #--------------Game Board-------------------
-        self.gameFrame = Frame(master)
-        self.gameFrame.pack()
-        self.board = Canvas(self.gameFrame, bg="black", width=width, height=height)
-        self.board.pack()
+        label_wid.grid(row=0, column=0)
+        self.entry_wid.grid(row=0, column=1)
+        label_hei.grid(row=0, column=2)
+        self.entry_hei.grid(row=0, column=3)
+        # --------------Game Board-------------------
+        self.gameFrame = Frame(self.master)
+        self.board = Canvas(self.gameFrame, bg="black", width=width*boxsize, height=height*boxsize)
+        self.snake = Snake(self.board)
         button = Button(inputs, text="Run", command=self.start)
         button.grid(row=0, column=4)
 
-        self.board = Canvas(master, width=width, height=height)
         inputs.pack(side="top")
-        master.mainloop()
+        self.gameFrame.pack()
+        self.board.pack()
+        self.master.mainloop()
 
     def start(self):
         global width, height
         neww = eval(self.entry_wid.get())
         newh = eval(self.entry_hei.get())
-        if newh != height and neww != width:
+        assert (newh > 10 and neww > 10)
+        print("Width = " + str(neww) + " and Height = " + str(newh))
+        if newh != height or neww != width:
             width = neww
             height = newh
-            self.board.config(width=width, height=height)
+            self.board.delete(ALL)
+            self.board.config(width=width*boxsize, height=height*boxsize)
+            self.snake = Snake(self.board)
         self.RUN = True
-        self.snake = snake()
-        runGame()
+        self.master.bind("<Up>", lambda event: self.snake.turn("n"))
+        self.master.bind("<Down>", lambda event: self.snake.turn("s"))
+        self.master.bind("<Left>", lambda event: self.snake.turn("w"))
+        self.master.bind("<Right>", lambda event: self.snake.turn("e"))
+        self.runGame()
 
     def runGame(self):
-        self.gameFrame.bind("<Up>", lambda: self.snake.direction="w")
-        self.gameFrame.bind("<Up>", lambda: self.snake.direction="w")
-        self.gameFrame.bind("<Up>", lambda: self.snake.direction="w")
-        self.gameFrame.bind("<Up>", lambda: self.snake.direction="w")
-        while self.RUN:
+        if self.RUN:
+            self.RUN = self.snake.move(self.board)
+            self.master.after(speed, self.runGame())
 
 
-
-class snake:
-    def __init__(self):
+class Snake:
+    def __init__(self, board):
         self.body = []
         self.length = 4
-        self.head = (width // 2, height // 2)
-        self.tail = (width // 2 - self.length - 1, height)
         self.direction = "e"
+        self.head = (width // 2, height // 2)
+        # board.create_rectangle(500, 500, 600, 600, width=0, fill="yellow")
         for i in range(self.length):
-            self.body.append((width // 2 - i, height // 2))
+            self.body.append(board.create_rectangle((self.head[0]-i) * boxsize, self.head[1] * boxsize,
+                                           (self.head[0]-i+1) * boxsize, (self.head[1]+1) * boxsize, width=0, fill="yellow"))
 
-    def move(self):
+    def move(self, board):
         assert (self.direction in "nwes")
-        headx = self.head[0]
-        heady = self.head[1]
-        if self.direction == "e" and headx != width:
-            self.head = (headx + 1, heady)
-        elif self.direction == "w" and headx != 0:
-            self.head = (headx - 1, heady)
-        elif self.direction == "n" and heady != height:
-            self.head = (headx, heady + 1)
-        elif self.direction == "s" and heady != 0:
-            self.head = (headx, heady - 1)
+        if self.direction == "e" and self.head[0] != width:
+            self.head = (self.head[0] + 1, self.head[1])
+        elif self.direction == "w" and self.head[0] != 0:
+            self.head = (self.head[0] - 1, self.head[1])
+        elif self.direction == "n" and self.head[1] != height:
+            self.head = (self.head[0], self.head[1] + 1)
+        elif self.direction == "s" and self.head[1] != 0:
+            self.head = (self.head[0], self.head[1] - 1)
         else:
             return False
-        self.body.insert(0, self.head)
+        self.body.insert(0, board.create_rectangle(self.head[0] * boxsize, self.head[1] * boxsize,
+                                                   (self.head[0]+1) * boxsize, (self.head[1]+1) * boxsize, width=0, fill="yellow"))
+        board.delete(self.body[-1])
         self.body.pop()
         return True
 
+    def turn(self, direct):
+        bol = True
+        if self.direction == "e" and direct == "w": bol = False
+        if self.direction == "w" and direct == "e": bol = False
+        if self.direction == "n" and direct == "s": bol = False
+        if self.direction == "s" and direct == "n": bol = False
+        if bol:
+            self.direction = direct
+
+
 if __name__ == '__main__':
-    app = snakeGame()
+    app = SnakeGame()
