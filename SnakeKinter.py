@@ -27,12 +27,12 @@ class SnakeGame:
         self.gameFrame = Frame(self.master)
         self.board = Canvas(self.gameFrame, bg="black", width=width*boxsize, height=height*boxsize)
         self.snake = Snake(self.board)
-        button = Button(inputs, text="Run", command=self.start)
-        button.grid(row=0, column=4)
 
         inputs.pack(side="top")
         self.gameFrame.pack()
         self.board.pack()
+        button = Button(inputs, text="Run", command=self.start)
+        button.grid(row=0, column=4)
         self.master.mainloop()
 
     def start(self):
@@ -40,7 +40,7 @@ class SnakeGame:
         neww = eval(self.entry_wid.get())
         newh = eval(self.entry_hei.get())
         assert (newh > 10 and neww > 10)
-        print("Width = " + str(neww) + " and Height = " + str(newh))
+        # print("Width = " + str(neww) + " and Height = " + str(newh))
         if newh != height or neww != width:
             width = neww
             height = newh
@@ -72,7 +72,7 @@ class Snake:
                                            (self.head[0]-i+1) * boxsize, (self.head[1]+1) * boxsize, width=0, fill="yellow"))
 
     def move(self, board):
-        assert (self.direction in "nwes")
+        # board.delete(ALL)
         if self.direction == "e" and self.head[0] != width:
             self.head = (self.head[0] + 1, self.head[1])
         elif self.direction == "w" and self.head[0] != 0:
@@ -85,8 +85,8 @@ class Snake:
             return False
         self.body.insert(0, board.create_rectangle(self.head[0] * boxsize, self.head[1] * boxsize,
                                                    (self.head[0]+1) * boxsize, (self.head[1]+1) * boxsize, width=0, fill="yellow"))
-        board.delete(self.body[-1])
-        self.body.pop()
+        #board.delete(self.body[-1])
+        #self.body.pop()
         return True
 
     def turn(self, direct):
