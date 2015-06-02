@@ -8,6 +8,7 @@ class SnakeGame:
     def __init__(self):
         self.root = Tk()
         self.Run = False
+        self.refresh = 0
 
         self.width = 50
         self.height = 50
@@ -36,15 +37,16 @@ class SnakeGame:
         self.root.mainloop()
 
     def start(self):
-        self.time = 0
+        #self.time = 0
+        self.refresh += 1
         self.Run = True
         self.points = 0
         self.speed = 100
         self.size = 6
-
         self.body = []
         self.chunks = []
         self.di = "E"
+
         new_w = eval(self.wentry.get())
         new_h = eval(self.hentry.get())
         if new_w != self.width or new_h != self.height:
@@ -65,17 +67,22 @@ class SnakeGame:
         self.root.bind("<Left>", lambda event: self.turn("W"))
         self.root.bind("<Right>", lambda event: self.turn("E"))
 
-        self.game_begin()
+        # self.refresh = False
+        self.game_begin(self.refresh)
 
-    def game_begin(self):
+    def game_begin(self, currentLoop):
+        '''if self.refresh is True:
+            return'''
+        if self.refresh > currentLoop:
+            return
         if self.Run is True:
-            self.time += self.speed
             self.move()
             if self.Run is True:
                 self.paint()
-            self.root.after(self.speed, self.game_begin)
+            self.root.after(self.speed, lambda cur=currentLoop: self.game_begin(cur))
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red", font=("Helvetica", 30), text="Game Over")
+
 
     def move(self):
         if self.di == "E" and self.head[0] != self.width:
