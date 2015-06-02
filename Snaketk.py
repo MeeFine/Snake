@@ -12,8 +12,6 @@ class SnakeGame:
         self.width = 50
         self.height = 50
         self.bsize = 10
-        self.size = 6
-        self.speed = 300
 
         self.frame = Frame()
         self.frame.pack()
@@ -32,7 +30,7 @@ class SnakeGame:
         self.hentry.pack(side="left")
         self.hentry.insert(0, "50")
 
-        self.button = Button(self.frame, text="RUN!", command=self.start)
+        self.button = Button(self.frame, text="Run / Restart", command=self.start)
         self.button.pack() #grid(row=0, column=4)
 
         self.root.mainloop()
@@ -41,6 +39,8 @@ class SnakeGame:
         self.time = 0
         self.Run = True
         self.points = 0
+        self.speed = 100
+        self.size = 6
 
         self.body = []
         self.chunks = []
@@ -71,8 +71,11 @@ class SnakeGame:
         if self.Run is True:
             self.time += self.speed
             self.move()
-            self.paint()
+            if self.Run is True:
+                self.paint()
             self.root.after(self.speed, self.game_begin)
+        else:
+            self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red", font=("Helvetica", 30), text="Game Over")
 
     def move(self):
         if self.di == "E" and self.head[0] != self.width:
@@ -95,11 +98,11 @@ class SnakeGame:
         else:
             self.create_food()
             self.size += 1
-            print(self.size)
 
     def paint(self):
         self.canvas.delete(ALL)
         self.canvas.create_rectangle(t2coord(self.food, self.bsize), width=0, fill="green")
+        self.body.clear()
         for i in range(self.size):
             self.body.append(self.canvas.create_rectangle(t2coord(self.chunks[i], self.bsize), width=0, fill="yellow"))
 
@@ -119,7 +122,6 @@ class SnakeGame:
         self.food = (randrange(self.width), randrange(self.height))
         while self.food in self.chunks:
             self.food = (randrange(self.width), randrange(self.height))
-        #self.canvas.create_rectangle(t2coord(self.food, self.bsize), width=0, fill="green")
 
 
 def t2coord(tp, bsize):
