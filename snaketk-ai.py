@@ -176,7 +176,7 @@ class SnakeGame:
 
     def find_move(self):
         self.board = {(i, j): (self.width + 1) * (self.height + 1) for i in range(self.width) for j in range(self.height)}
-        self.board_reset(self.snake, self.board)
+        self.board_reset(self.snake, len(self.snake), self.board)
         if self.can_get_food(self.food, self.snake, self.board):
             self.virtual_move()
             if self.is_tail_inside():
@@ -202,7 +202,7 @@ class SnakeGame:
 
     def follow_tail(self):
         self.temps = deepcopy(self.snake)
-        self.board_reset(self.temps, self.tempb)
+        self.board_reset(self.temps, len(self.temps), self.tempb)
         self.tempb[self.temps[-1]] = 0
         self.tempb[self.food] = 2 * (self.width + 1) * (self.height + 1)
         self.can_get_food(self.temps[-1], self.temps, self.tempb)
@@ -212,7 +212,7 @@ class SnakeGame:
 
     def any_possible_move(self):
         move = ""
-        self.board_reset(self.snake, self.board)
+        self.board_reset(self.snake, len(self.snake), self.board)
         self.can_get_food(self.food, self.snake, self.board)
         min = 2 * (self.width + 1) * (self.height + 1)
 
@@ -223,13 +223,13 @@ class SnakeGame:
                 move = i
         return move
 
-    def board_reset(self, snake, board):
+    def board_reset(self, snake, size, board):
         for i in range(self.width):
             for j in range(self.height):
                 temp = (i, j)
                 if temp == self.food:
                     board[temp] = 0
-                elif temp not in snake:
+                elif temp not in snake[:size]:
                     board[temp] = (self.width + 1) * (self.height + 1)
                 else:
                     board[temp] = 2 * (self.width + 1) * (self.height + 1)
@@ -237,17 +237,17 @@ class SnakeGame:
     def virtual_move(self):
         self.temps = deepcopy(self.snake)
         self.tempb = deepcopy(self.board)
-        self.board_reset(self.temps, self.tempb)
+        self.board_reset(self.temps, len(self.temps), self.tempb)
 
         food_eaten = False
-        while not food_eaten:
+        while food_eaten is not True:
             self.can_get_food(self.food, self.temps, self.tempb)
             move = self.shortest_move(self.temps, self.tempb)
             temphead = self.test_move(self.temps[0], move)
             self.temps.insert(0, temphead)
             self.tempb[temphead] = 2 * (self.width + 1) * (self.height + 1)
             if temphead == self.food:
-                self.board_reset(self.temps, self.tempb)
+                self.board_reset(self.temps, len(self.temps), self.tempb)
                 food_eaten = True
             else:
                 #tail = self.temps.pop()
