@@ -6,7 +6,7 @@ from random import randint
 
 # 蛇运动的场地长宽
 HEIGHT = 10
-WIDTH = 20
+WIDTH = 10
 FIELD_SIZE = HEIGHT * WIDTH
 
 # 蛇头总是位于snake数组的第一个元素
@@ -72,7 +72,7 @@ def is_move_possible(idx, move):
 # board_refresh后，UNDEFINED值都变为了到达食物的路径长度
 # 如需要还原，则要重置它
 def board_reset(psnake, psize, pboard):
-    for i in xrange(FIELD_SIZE):
+    for i in range(FIELD_SIZE):
         if i == food:
             pboard[i] = FOOD
         elif is_cell_free(i, psize, psnake): # 该位置为空
@@ -93,7 +93,7 @@ def board_refresh(pfood, psnake, pboard):
         idx = queue.pop(0)
         if inqueue[idx] == 1: continue
         inqueue[idx] = 1
-        for i in xrange(4):
+        for i in range(4):
             if is_move_possible(idx, mov[i]):
                 if idx + mov[i] == psnake[HEAD]:
                     found = True
@@ -111,10 +111,11 @@ def board_refresh(pfood, psnake, pboard):
 def choose_shortest_safe_move(psnake, pboard):
     best_move = ERR
     min = SNAKE
-    for i in xrange(4):
+    for i in range(4):
         if is_move_possible(psnake[HEAD], mov[i]) and pboard[psnake[HEAD]+mov[i]]<min:
             min = pboard[psnake[HEAD]+mov[i]]
             best_move = mov[i]
+    #print("Shortest: " + str(min))
     return best_move
 
 # 从蛇头开始，根据board中元素值，
@@ -122,10 +123,11 @@ def choose_shortest_safe_move(psnake, pboard):
 def choose_longest_safe_move(psnake, pboard):
     best_move = ERR
     max = -1
-    for i in xrange(4):
+    for i in range(4):
         if is_move_possible(psnake[HEAD], mov[i]) and pboard[psnake[HEAD]+mov[i]]<UNDEFINED and pboard[psnake[HEAD]+mov[i]]>max:
             max = pboard[psnake[HEAD]+mov[i]]
             best_move = mov[i]
+    #print("Longest: " + str())
     return best_move
 
 # 检查是否可以追着蛇尾运动，即蛇头和蛇尾间是有路径的
@@ -136,7 +138,7 @@ def is_tail_inside():
     tmpboard[tmpsnake[tmpsnake_size-1]] = 0 # 虚拟地将蛇尾变为食物(因为是虚拟的，所以在tmpsnake,tmpboard中进行)
     tmpboard[food] = SNAKE # 放置食物的地方，看成蛇身
     result = board_refresh(tmpsnake[tmpsnake_size-1], tmpsnake, tmpboard) # 求得每个位置到蛇尾的路径长度
-    for i in xrange(4): # 如果蛇头和蛇尾紧挨着，则返回False。即不能follow_tail，追着蛇尾运动了
+    for i in range(4): # 如果蛇头和蛇尾紧挨着，则返回False。即不能follow_tail，追着蛇尾运动了
         if is_move_possible(tmpsnake[HEAD], mov[i]) and tmpsnake[HEAD]+mov[i]==tmpsnake[tmpsnake_size-1] and tmpsnake_size>3:
             result = False
     return result
@@ -163,14 +165,14 @@ def any_possible_move():
     board_refresh(food, snake, board)
     min = SNAKE
 
-    for i in xrange(4):
+    for i in range(4):
         if is_move_possible(snake[HEAD], mov[i]) and board[snake[HEAD]+mov[i]]<min:
             min = board[snake[HEAD]+mov[i]]
             best_move = mov[i]
     return best_move
 
 def shift_array(arr, size):
-    for i in xrange(size, 0, -1):
+    for i in range(size, 0, -1):
         arr[i] = arr[i-1]
 
 def new_food():
@@ -181,7 +183,7 @@ def new_food():
         h = randint(1, HEIGHT-2)
         food = h * WIDTH + w
         cell_free = is_cell_free(food, snake_size, snake)
-    win.addch(food/WIDTH, food%WIDTH, '@')
+    win.addch(food//WIDTH, food%WIDTH, '@')
 
 # 真正的蛇在这个函数中，朝pbest_move走1步
 def make_move(pbest_move):
@@ -197,7 +199,7 @@ def make_move(pbest_move):
     if key == 27: return
 
     p = snake[HEAD]
-    win.addch(p/WIDTH, p%WIDTH, '*')
+    win.addch(p//WIDTH, p%WIDTH, '*')
 
     
     # 如果新加入的蛇头就是食物的位置
@@ -210,7 +212,7 @@ def make_move(pbest_move):
     else: # 如果新加入的蛇头不是食物的位置
         board[snake[HEAD]] = SNAKE # 新的蛇头
         board[snake[snake_size]] = UNDEFINED # 蛇尾变为空格
-        win.addch(snake[snake_size]/WIDTH, snake[snake_size]%WIDTH, ' ')
+        win.addch(snake[snake_size]//WIDTH, snake[snake_size]%WIDTH, ' ')
 
 # 虚拟地运行一次，然后在调用处检查这次运行可否可行
 # 可行才真实运行。
@@ -259,7 +261,7 @@ curses.noecho()
 curses.curs_set(0)
 win.border(0)
 win.nodelay(1)
-win.addch(food/WIDTH, food%WIDTH, '@')
+win.addch(food//WIDTH, food%WIDTH, '@')
 
     
 while key != 27:
@@ -287,3 +289,4 @@ while key != 27:
         
 curses.endwin()
 print("\nScore - " + str(score))
+print(board)

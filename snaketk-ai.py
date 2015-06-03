@@ -3,7 +3,7 @@ from random import randrange
 from copy import deepcopy
 
 
-class SnakeGame:
+class SnakeGame():
     def __init__(self):
         self.root = Tk()
         self.Run = False
@@ -43,12 +43,12 @@ class SnakeGame:
         self.Run = True
         # self.points = 0
 
-        self.speed = 50
+        self.speed = 10
         self.size = 6
         self.originalSize = 6
         self.snake = []
         self.di = "E"
-
+        file = open("snake_data.txt", "w")
         new_w = eval(self.wentry.get())
         new_h = eval(self.hentry.get())
         if new_w != self.width or new_h != self.height:
@@ -61,7 +61,6 @@ class SnakeGame:
         for i in range(self.size):
             self.canvas.create_rectangle(t2coord(self.snake[i], self.bsize), width=0, fill="yellow")
         self.nexthead = self.test_move(self.snake[0], self.di)
-        # self.canvas.create_rectangle(t2coord(self.nexthead, self.bsize), width=0, fill="RoyalBlue2")
 
         self.create_food()
         self.canvas.create_rectangle(t2coord(self.food, self.bsize), width=0, fill="green")
@@ -72,14 +71,16 @@ class SnakeGame:
         self.root.bind("<Right>", lambda event: self.turn("E"))'''
 
         # self.refresh = False
-        self.game_begin_ai(self.refresh)
+        self.game_begin_ai(self.refresh, file)
 
-    def game_begin_ai(self, currentLoop):
+    def game_begin_ai(self, currentLoop, file):
         if self.refresh > currentLoop:
             return
+
         if self.Run is True:
             if self.nexthead in self.snake:
                 self.Run = False
+
             if self.Run is True:
                 self.snake.insert(0, self.nexthead)
                 if self.nexthead != self.food:
@@ -90,18 +91,20 @@ class SnakeGame:
                 newmove = self.find_move()
                 if newmove != "":
                     self.di = newmove
+
+                file.write("next: ")
+                file.write(str(self.board))
+
                 self.nexthead = self.test_move(self.snake[0], self.di)
-                self.paint()
-            self.root.after(self.speed, lambda cur=currentLoop: self.game_begin_ai(cur))
-            #self.scorelabel = Label(self.frame, fg="black", anchor=LEFT,  text="Points: " + str(len(self.snake) - self.originalSize) + " ")
-            #self.scorelabel.pack()
+                print("Current head position: "+ str(self.nexthead)+ ", Now move to: " + self.di)
+                self.paint_ai()
+            self.root.after(self.speed, lambda cur=currentLoop: self.game_begin_ai(cur, file))
+
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red",
                                     font=("Helvetica", self.width // 2), text="Game Over")
-            self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize + 10, fill="red",
-                                    font=("Helvetica", self.width // 2), text="You got " + str(len(self.snake) - self.originalSize))
-            self.scorelabel = Label(self.frame, fg="black", anchor=CENTER,  text="Points: " + str(len(self.snake) - self.originalSize) + " ")
-            self.scorelabel.pack()
+
+
 
 
 
@@ -110,8 +113,8 @@ class SnakeGame:
         self.refresh += 1
         self.Run = True
         # self.points = 0
-        self.speed = 100
-        self.size = 6
+        self.speed = 150
+        self.size = 3
         self.snake = []
         self.di = "E"
 
@@ -147,7 +150,7 @@ class SnakeGame:
                 self.paint()'''
             temphead = self.test_move(self.snake[0], self.di)
             if temphead in self.snake:
-                print("Entered")
+                #print("Entered")
                 self.Run = False
             if self.Run is True:
                 self.snake.insert(0, temphead)
@@ -161,7 +164,6 @@ class SnakeGame:
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red",
                                     font=("Helvetica", self.width ), text="Game Over")
-            self.printScore()
 
     def test_move(self, head, direct):
         if direct == "E" and head[0] < self.width-1:
@@ -179,17 +181,17 @@ class SnakeGame:
         self.board_reset(self.snake, len(self.snake), self.board)
         if self.can_get_food(self.food, self.snake, self.board):
             self.virtual_move()
-            if self.is_tail_inside():
-                move = self.shortest_move(self.snake, self.board)
+            if self.virtual_explore():
+                return self.shortest_move(self.snake, self.board)
             else:
-                move = self.follow_tail()
+                return self.follow_tail()
         else:
             move = self.follow_tail()
         if move == "":
             move = self.any_possible_move()
         return move
 
-    def is_tail_inside(self):
+    def virtual_explore(self):
         self.tempb[self.temps[-1]] = 0
         self.tempb[self.food] = 2 * (self.width + 1) * (self.height + 1)
         result = self.can_get_food(self.temps[-1], self.temps, self.tempb)
@@ -258,7 +260,13 @@ class SnakeGame:
         self.canvas.create_rectangle(t2coord(self.food, self.bsize), width=0, fill="red")
         for i in range(self.size):
             self.canvas.create_rectangle(t2coord(self.snake[i], self.bsize), width=0, fill="yellow")
-        # self.canvas.create_rectangle(t2coord(self.nexthead, self.bsize), width=0, fill="RoyalBlue2")
+
+    def paint_ai(self):
+        self.canvas.delete(ALL)
+        self.canvas.create_rectangle(t2coord(self.food, self.bsize), width=0, fill="red")
+        for i in range(self.size):
+            self.canvas.create_rectangle(t2coord(self.snake[i], self.bsize), width=0, fill="yellow")
+        self.canvas.create_rectangle(t2coord(self.nexthead, self.bsize), width=0, fill="RoyalBlue2")
 
     def turn(self, direct):
         bol = True
@@ -321,9 +329,9 @@ class SnakeGame:
 
     def longest_move(self, snake, board):
         best_move = ""
-        maxMove = 2 * (self.width + 1) * (self.height + 1)
+        maxMove = 0
         for i in ["N", "S", "W", "E"]:
-            if self.is_safe(snake[0], i) and board[self.test_move(snake[0], i)] > maxMove:
+            if self.is_safe(snake[0], i) and board[self.test_move(snake[0], i)] > maxMove and board[self.test_move(snake[0], i)] < (self.width + 1) * (self.height + 1):
                 maxMove = board[self.test_move(snake[0], i)]
                 best_move = i
         return best_move
@@ -334,4 +342,7 @@ class SnakeGame:
 def t2coord(tp, bsize):
     return tp[0]*bsize, tp[1]*bsize, (tp[0]+1)*bsize, (tp[1]+1)*bsize
 
+#file = open("snake_data.txt", "w")
+
 app = SnakeGame()
+
