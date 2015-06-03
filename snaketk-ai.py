@@ -42,8 +42,9 @@ class SnakeGame:
         self.refresh += 1
         self.Run = True
         # self.points = 0
-        self.speed = 10
+        self.speed = 30
         self.size = 6
+        self.originalSize = 6
         self.snake = []
         self.di = "E"
 
@@ -95,6 +96,8 @@ class SnakeGame:
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red",
                                     font=("Helvetica", self.width // 2), text="Game Over")
+            self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize + 10, fill="red",
+                                    font=("Helvetica", self.width // 2), text="You got " + str(len(self.snake) - self.originalSize))
 
     def start_human(self):
         self.refresh += 1
@@ -263,6 +266,7 @@ class SnakeGame:
 
     def is_safe(self, first, move):
         can_move = False
+        can_move = True if first not in self.snake else False
         if move == "W":
             can_move = True if first[0] > 0 else False
         elif move == "E":
@@ -271,6 +275,7 @@ class SnakeGame:
             can_move = True if first[1] > 0 else False
         elif move == "S":
             can_move = True if first[1] < self.height-1 else False
+
         return can_move
 
     def can_get_food(self, snake, board):
@@ -296,7 +301,7 @@ class SnakeGame:
         return found
 
     def shortest_move(self, snake, board):
-        best_move = self.di
+        best_move = ""
         minMove = 2 * (self.width + 1) * (self.height + 1)
         for i in ["N", "S", "W", "E"]:
             if self.is_safe(snake[0], i) and board[self.test_move(snake[0], i)]< minMove:
@@ -305,7 +310,7 @@ class SnakeGame:
         return best_move
 
     def longest_move(self, snake, board):
-        best_move = self.di
+        best_move = ""
         maxMove = 2 * (self.width + 1) * (self.height + 1)
         for i in ["N", "S", "W", "E"]:
             if self.is_safe(snake[0], i) and board[self.test_move(snake[0], i)] > maxMove:
