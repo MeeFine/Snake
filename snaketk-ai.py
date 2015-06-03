@@ -73,41 +73,91 @@ class SnakeGame:
         if self.refresh > currentLoop:
             return
         if self.Run is True:
-            self.move()
+            self.Run = self.move()
             if self.Run is True:
                 self.paint()
             self.root.after(self.speed, lambda cur=currentLoop: self.game_begin(cur))
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red", font=("Helvetica", 30), text="Game Over")
 
-    def move(self):
-        self.di = self.find_move()
-        if self.di == "E" and self.head[0] != self.width:
-            self.head = (self.head[0] + 1, self.head[1])
-        elif self.di == "W" and self.head[0] != 0:
-            self.head = (self.head[0] - 1, self.head[1])
-        elif self.di == "N" and self.head[1] != 0:
-            self.head = (self.head[0], self.head[1] - 1)
-        elif self.di == "S" and self.head[1] != self.height:
-            self.head = (self.head[0], self.head[1] + 1)
+    def move(self, direct, snake):
+        head = snake[0]
+        if direct == "E" and head[0] != self.width:
+            head = (head[0] + 1, self.head[1])
+        elif direct == "W" and self.head[0] != 0:
+            head = (head[0] - 1, self.head[1])
+        elif direct == "N" and self.head[1] != 0:
+            head = (head[0], self.head[1] - 1)
+        elif direct == "S" and self.head[1] != self.height:
+            head = (head[0], self.head[1] + 1)
         else:
-            self.Run = False
-            return
-        if self.head in self.snake:
-            self.Run = False
-            return
-        self.snake.insert(0, self.head)
-        if self.head != self.food:
-            self.snake.pop()
+            return False
+        if head in snake:
+            return False
+        snake.insert(0, head)
+        if head != self.food:
+            snake.pop()
         else:
             self.create_food()
-            self.size += 1
+            self.tempsize += 1
+
+    def test_move(self, head, direct):
+        if direct == "E" and head[0] != self.width:
+            head = (head[0] + 1, self.head[1])
+        elif direct == "W" and self.head[0] != 0:
+            head = (head[0] - 1, self.head[1])
+        elif direct == "N" and self.head[1] != 0:
+            head = (head[0], self.head[1] - 1)
+        elif direct == "S" and self.head[1] != self.height:
+            head = (head[0], self.head[1] + 1)
+        return head
 
     def find_move(self):
+        move = ""
         self.board = {(i, j): 0 for i in range(self.width) for j in range(self.height)}
         self.board_reset(self.board)
-        self.virtual_move()
+        if self.can_get_food(self.board):
+            self.virtual_move()
+            if self.is_tail_inside():
+                move = self.short_path(self.snake, self.board)
+            move = self.follow_trail()
+        else:
+            move = self.follow_trail()
+        if move == "":
+            move = self.any_possible_move()
+        return move
 
+    def is_tail_inside(self):
+        self.tempb[self.temps[-1]] = 0
+        self.tempb[self.food] = 2 * (self.width + 1) * (self.height + 1)
+        result = self.can_get_food(self.tempb)
+        for i in ["N", "S", "W", "E"]:
+            if self.is_move_possible(self.temps[0], i) and self.test_move(self.temps[0], i) == self.temps[-1] \
+                    and len(self.temps) > 3:
+                result = False
+        return result
+
+    def follow_tail(self):
+        self.temps = deepcopy(self.snake)
+        self.board_reset(self.tempb)
+        self.tempb[self.temps[-1]] = 0
+        self.tempb[self.food] = 2 * (self.width + 1) * (self.height + 1)
+        self.can_get_food(self.tempb)
+        self.tempb[self.temps[-1]] = 2 * (self.width + 1) * (self.height + 1)
+
+        return self.choose_longest_safe_move(self.temps, self.tempb)
+
+    def any_possible_move(self):
+        move = ""
+        self.board_reset(self.board)
+        self.can_get_food(self.board)
+        min = 2 * (self.width + 1) * (self.height + 1)
+
+        for i in ["N", "S", "W", "E"]:
+            if self.is_move_possible(self.temps[0], i) and self.board[self.test_move(self.temps[0], i)] < min:
+                min = self.board[self.test_move(self.temps[0], i)]
+                move = i
+        return move
 
     def board_reset(self, board):
         for i in range(self.width):
@@ -120,12 +170,19 @@ class SnakeGame:
                 else:
                     board[temp] = 2 * (self.width + 1) * (self.height + 1)
 
-    def can_get_food(self):
-
+    def can_get_food(self, board):
+        return True
 
     def virtual_move(self):
-        temps = deepcopy(self.snake)
-        tempb = deepcopy(self.board)
+        self.temps = deepcopy(self.snake)
+        self.tempb = deepcopy(self.board)
+        self.board_reset(self.tempb)
+
+        food_eaten = False
+        while not food_eaten:
+            self.can_get_food(self.tempb)
+            move = self.short_path(self.tmps, self.tempb)
+
 
 
     def paint(self):
