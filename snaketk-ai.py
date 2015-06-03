@@ -11,8 +11,8 @@ class SnakeGame:
         self.Run = False
         self.refresh = 0
 
-        self.width = 50
-        self.height = 50
+        self.width = 10
+        self.height = 10
         self.bsize = 10
 
         self.frame = Frame()
@@ -25,12 +25,12 @@ class SnakeGame:
         self.wlabel.pack(side="left")
         self.wentry = Entry(self.frame)
         self.wentry.pack(side="left")
-        self.wentry.insert(0, "50")
+        self.wentry.insert(0, str(self.width))
         self.hlabel = Label(self.frame, fg="black", text="Height")
         self.hlabel.pack(side="left")
         self.hentry = Entry(self.frame)
         self.hentry.pack(side="left")
-        self.hentry.insert(0, "50")
+        self.hentry.insert(0, str(self.height))
 
         self.button = Button(self.frame, text="Run / Restart", command=self.start)
         self.button.pack()
@@ -41,7 +41,7 @@ class SnakeGame:
         self.refresh += 1
         self.Run = True
         # self.points = 0
-        self.speed = 100
+        self.speed = 10
         self.size = 6
         self.snake = []
         self.di = "E"
@@ -92,7 +92,7 @@ class SnakeGame:
                 self.paint()
             self.root.after(self.speed, lambda cur=currentLoop: self.game_begin(cur))
         else:
-            self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red", font=("Helvetica", 30), text="Game Over")
+            self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red", font=("Helvetica", self.width // 2), text="Game Over")
 
     '''def move(self, direct, snake):
         head = snake[0]
@@ -133,7 +133,8 @@ class SnakeGame:
             self.virtual_move()
             if self.is_tail_inside():
                 move = self.shortest_move(self.snake, self.board)
-            move = self.follow_tail()
+            else:
+                move = self.follow_tail()
         else:
             move = self.follow_tail()
         if move == "":
@@ -182,7 +183,6 @@ class SnakeGame:
                     board[temp] = (self.width + 1) * (self.height + 1)
                 else:
                     board[temp] = 2 * (self.width + 1) * (self.height + 1)
-
 
     def virtual_move(self):
         self.temps = deepcopy(self.snake)
@@ -259,7 +259,7 @@ class SnakeGame:
         return found
 
     def shortest_move(self, snake, board):
-        best_move = -1
+        best_move = self.di
         minMove = 2 * (self.width + 1) * (self.height + 1)
         for i in ["N", "S", "W", "E"]:
             if self.is_safe(snake[0], i) and board[self.test_move(snake[0], i)]< minMove:
@@ -268,7 +268,7 @@ class SnakeGame:
         return best_move
 
     def longest_move(self, snake, board):
-        best_move = -1
+        best_move = self.di
         maxMove = 2 * (self.width + 1) * (self.height + 1)
         for i in ["N", "S", "W", "E"]:
             if self.is_safe(snake[0], i) and board[self.test_move(snake[0], i)] > maxMove:
