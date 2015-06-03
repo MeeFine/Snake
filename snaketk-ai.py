@@ -3,7 +3,7 @@ from random import randrange
 from copy import deepcopy
 
 
-class SnakeGame():
+class SnakeGame:
     def __init__(self):
         self.root = Tk()
         self.Run = False
@@ -65,11 +65,6 @@ class SnakeGame():
         self.create_food()
         self.canvas.create_rectangle(t2coord(self.food, self.bsize), width=0, fill="green")
 
-        '''self.root.bind("<Up>", lambda event: self.turn("N"))
-        self.root.bind("<Down>", lambda event: self.turn("S"))
-        self.root.bind("<Left>", lambda event: self.turn("W"))
-        self.root.bind("<Right>", lambda event: self.turn("E"))'''
-
         # self.refresh = False
         self.game_begin_ai(self.refresh, file)
 
@@ -96,18 +91,13 @@ class SnakeGame():
                 file.write(str(self.board))
 
                 self.nexthead = self.test_move(self.snake[0], self.di)
-                print("Current head position: "+ str(self.nexthead)+ ", Now move to: " + self.di)
+                # print("Current head position: "+ str(self.nexthead)+ ", Now move to: " + self.di)
                 self.paint_ai()
             self.root.after(self.speed, lambda cur=currentLoop: self.game_begin_ai(cur, file))
 
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red",
                                     font=("Helvetica", self.width // 2), text="Game Over")
-
-
-
-
-
 
     def start_human(self):
         self.refresh += 1
