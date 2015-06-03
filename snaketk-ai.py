@@ -73,14 +73,24 @@ class SnakeGame:
         if self.refresh > currentLoop:
             return
         if self.Run is True:
-            self.Run = self.move()
+            '''self.Run = self.move()
             if self.Run is True:
-                self.paint()
+                self.paint()'''
+            temphead = self.test_move(self.snake[0], self.di)
+            if temphead in self.snake:
+                self.Run = False
+            if self.Run is True:
+                self.snake.insert(0, temphead)
+                if temphead != self.food:
+                    self.snake.pop()
+                else:
+                    self.create_food()
+                    self.size += 1
             self.root.after(self.speed, lambda cur=currentLoop: self.game_begin(cur))
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red", font=("Helvetica", 30), text="Game Over")
 
-    def move(self, direct, snake):
+    '''def move(self, direct, snake):
         head = snake[0]
         if direct == "E" and head[0] != self.width:
             head = (head[0] + 1, self.head[1])
@@ -99,7 +109,7 @@ class SnakeGame:
             snake.pop()
         else:
             self.create_food()
-            self.tempsize += 1
+            self.tempsize += 1'''
 
     def test_move(self, head, direct):
         if direct == "E" and head[0] != self.width:
