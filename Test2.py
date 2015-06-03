@@ -66,6 +66,7 @@ def is_move_possible(idx, move):
     elif move == DOWN:
         flag = True if idx < (FIELD_SIZE-2*WIDTH) else False # 即idx/WIDTH < HEIGHT-2
     return flag
+
 # 重置board
 # board_refresh后，UNDEFINED值都变为了到达食物的路径长度
 # 如需要还原，则要重置它
@@ -83,7 +84,7 @@ def board_reset(psnake, psize, pboard):
 def board_refresh(pfood, psnake, pboard):
     queue = []
     queue.append(pfood)
-    inqueue = [0] * FIELD_SIZE
+    inqueue = [0] * FIELD_SIZE # Stands for if the position has been discovered
     found = False
     # while循环结束后，除了蛇的身体，
     # 其它每个方格中的数字代码从它到食物的路径长度

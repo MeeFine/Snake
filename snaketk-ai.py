@@ -2,6 +2,7 @@ __author__ = 'ziming3'
 from tkinter import *
 from random import randrange
 import time
+from copy import deepcopy
 
 
 class SnakeGame:
@@ -37,14 +38,12 @@ class SnakeGame:
         self.root.mainloop()
 
     def start(self):
-        #self.time = 0
         self.refresh += 1
         self.Run = True
-        self.points = 0
+        # self.points = 0
         self.speed = 100
         self.size = 6
-        self.body = []
-        self.chunks = []
+        self.snake = []
         self.di = "E"
 
         new_w = eval(self.wentry.get())
@@ -55,9 +54,9 @@ class SnakeGame:
             self.canvas.config(width=self.width*self.bsize, height=self.height*self.bsize)
         self.head = (self.width // 2, self.height // 2)
         for i in range(self.size):
-            self.chunks.append((self.head[0]-i, self.head[1]))
+            self.snake.append((self.head[0]-i, self.head[1]))
         for i in range(self.size):
-            self.body.append(self.canvas.create_rectangle(t2coord(self.chunks[i], self.bsize), width=0, fill="yellow"))
+            self.canvas.create_rectangle(t2coord(self.snake[i], self.bsize), width=0, fill="yellow")
 
         self.create_food()
         self.canvas.create_rectangle(t2coord(self.food, self.bsize), width=0, fill="green")
@@ -71,8 +70,6 @@ class SnakeGame:
         self.game_begin(self.refresh)
 
     def game_begin(self, currentLoop):
-        '''if self.refresh is True:
-            return'''
         if self.refresh > currentLoop:
             return
         if self.Run is True:
@@ -83,8 +80,8 @@ class SnakeGame:
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red", font=("Helvetica", 30), text="Game Over")
 
-
     def move(self):
+        self.di = self.find_move()
         if self.di == "E" and self.head[0] != self.width:
             self.head = (self.head[0] + 1, self.head[1])
         elif self.di == "W" and self.head[0] != 0:
@@ -94,27 +91,48 @@ class SnakeGame:
         elif self.di == "S" and self.head[1] != self.height:
             self.head = (self.head[0], self.head[1] + 1)
         else:
-            self.end()
+            self.Run = False
             return
-        if self.head in self.chunks:
-            self.end()
+        if self.head in self.snake:
+            self.Run = False
             return
-        self.chunks.insert(0, self.head)
+        self.snake.insert(0, self.head)
         if self.head != self.food:
-            self.chunks.pop()
+            self.snake.pop()
         else:
             self.create_food()
             self.size += 1
 
+    def find_move(self):
+        self.board = {(i, j): 0 for i in range(self.width) for j in range(self.height)}
+        self.board_reset(self.board)
+        self.virtual_move()
+
+
+    def board_reset(self, board):
+        for i in range(self.width):
+            for j in range(self.height):
+                temp = (i, j)
+                if self.food == temp:
+                    board[temp] = 0
+                elif temp not in self.snake:
+                    board[temp] = (self.width + 1) * (self.height + 1)
+                else:
+                    board[temp] = 2 * (self.width + 1) * (self.height + 1)
+
+    def can_get_food(self):
+
+
+    def virtual_move(self):
+        temps = deepcopy(self.snake)
+        tempb = deepcopy(self.board)
+
+
     def paint(self):
         self.canvas.delete(ALL)
         self.canvas.create_rectangle(t2coord(self.food, self.bsize), width=0, fill="green")
-        self.body.clear()
         for i in range(self.size):
-            self.body.append(self.canvas.create_rectangle(t2coord(self.chunks[i], self.bsize), width=0, fill="yellow"))
-
-    def end(self):
-        self.Run = False
+            self.canvas.create_rectangle(t2coord(self.snake[i], self.bsize), width=0, fill="yellow")
 
     def turn(self, direct):
         bol = True
@@ -127,37 +145,8 @@ class SnakeGame:
 
     def create_food(self):
         self.food = (randrange(self.width), randrange(self.height))
-        while self.food in self.chunks:
+        while self.food in self.snake:
             self.food = (randrange(self.width), randrange(self.height))
-            
-    def is_safe(self):
-        can_move = False
-        if self.di == "W":
-            can_move = True if self.head[0] > 0 else False
-        elif self.di == "E":
-            can_move = True if self.head[0] < self.width else False
-        elif self.di == "N":
-            can_move = True if self.head[1] > 0 else False # 即idx/WIDTH > 1
-        elif self.di == "S":
-            can_move = True if self.head[1] < self.height else False # 即idx/WIDTH < HEIGHT-2
-        return can_move
-
-    def runBFS(self):
-        tempBoard = []
-        for idx in range(self.width * self.height):
-            tempBoard.append()
-        OPEN = []
-        CLOSE = []
-        found = True
-        OPEN.append(self.food)
-
-        while (OPEN != []):
-            first = OPEN.pop(0)
-            for i in range(4):
-                self.head[0] = self.head[0] + self.MOVE[i][0]
-                self.head[1] = self.head[1] + self.MOVE[i][1]
-                if is_safe(self):
-                    if ()
 
 
 def t2coord(tp, bsize):
