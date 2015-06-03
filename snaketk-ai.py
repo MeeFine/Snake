@@ -93,12 +93,18 @@ class SnakeGame:
                 self.nexthead = self.test_move(self.snake[0], self.di)
                 self.paint()
             self.root.after(self.speed, lambda cur=currentLoop: self.game_begin_ai(cur))
-
+            #self.scorelabel = Label(self.frame, fg="black", anchor=LEFT,  text="Points: " + str(len(self.snake) - self.originalSize) + " ")
+            #self.scorelabel.pack()
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red",
                                     font=("Helvetica", self.width // 2), text="Game Over")
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize + 10, fill="red",
                                     font=("Helvetica", self.width // 2), text="You got " + str(len(self.snake) - self.originalSize))
+            self.scorelabel = Label(self.frame, fg="black", anchor=CENTER,  text="Points: " + str(len(self.snake) - self.originalSize) + " ")
+            self.scorelabel.pack()
+
+
+
 
     def start_human(self):
         self.refresh += 1
@@ -154,7 +160,8 @@ class SnakeGame:
             self.root.after(self.speed, lambda cur=currentLoop: self.game_begin_human(cur))
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red",
-                                    font=("Helvetica", self.width // 2), text="Game Over")
+                                    font=("Helvetica", self.width ), text="Game Over")
+            self.printScore()
 
     def test_move(self, head, direct):
         if direct == "E" and head[0] < self.width-1:
@@ -186,6 +193,7 @@ class SnakeGame:
         self.tempb[self.temps[-1]] = 0
         self.tempb[self.food] = 2 * (self.width + 1) * (self.height + 1)
         result = self.can_get_food(self.temps[-1], self.temps, self.tempb)
+
         for i in ["N", "S", "W", "E"]:
             if self.is_safe(self.temps[0], i) and self.test_move(self.temps[0], i) == self.temps[-1] \
                     and len(self.temps) > 3:
@@ -210,6 +218,7 @@ class SnakeGame:
 
         for i in ["N", "S", "W", "E"]:
             if self.is_safe(self.snake[0], i) and self.board[self.test_move(self.snake[0], i)] < min:
+
                 min = self.board[self.test_move(self.snake[0], i)]
                 move = i
         return move
@@ -241,8 +250,8 @@ class SnakeGame:
                 self.board_reset(self.temps, self.tempb)
                 food_eaten = True
             else:
-                tail = self.temps.pop()
-                self.tempb[tail] = (self.width + 1) * (self.height + 1)
+                #tail = self.temps.pop()
+                self.tempb[self.temps[-1]] = (self.width + 1) * (self.height + 1)
 
     def paint(self):
         self.canvas.delete(ALL)
@@ -318,6 +327,8 @@ class SnakeGame:
                 maxMove = board[self.test_move(snake[0], i)]
                 best_move = i
         return best_move
+
+
 
 
 def t2coord(tp, bsize):
