@@ -78,6 +78,7 @@ class SnakeGame:
                 self.paint()'''
             temphead = self.test_move(self.snake[0], self.di)
             if temphead in self.snake:
+                print("Entered")
                 self.Run = False
             if self.Run is True:
                 self.snake.insert(0, temphead)
@@ -86,6 +87,7 @@ class SnakeGame:
                 else:
                     self.create_food()
                     self.size += 1
+                self.paint()
             self.root.after(self.speed, lambda cur=currentLoop: self.game_begin(cur))
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red", font=("Helvetica", 30), text="Game Over")
@@ -113,18 +115,18 @@ class SnakeGame:
 
     def test_move(self, head, direct):
         if direct == "E" and head[0] != self.width:
-            head = (head[0] + 1, self.head[1])
-        elif direct == "W" and self.head[0] != 0:
-            head = (head[0] - 1, self.head[1])
-        elif direct == "N" and self.head[1] != 0:
-            head = (head[0], self.head[1] - 1)
-        elif direct == "S" and self.head[1] != self.height:
-            head = (head[0], self.head[1] + 1)
+            head = (head[0] + 1, head[1])
+        elif direct == "W" and head[0] != 0:
+            head = (head[0] - 1, head[1])
+        elif direct == "N" and head[1] != 0:
+            head = (head[0], head[1] - 1)
+        elif direct == "S" and head[1] != self.height:
+            head = (head[0], head[1] + 1)
         return head
 
     def find_move(self):
         move = ""
-        self.board = {(i, j): 0 for i in range(self.width) for j in range(self.height)}
+        self.board = {(i, j): (self.width + 1) * (self.height + 1) for i in range(self.width) for j in range(self.height)}
         self.board_reset(self.board)
         if self.can_get_food(self.board):
             self.virtual_move()
@@ -169,13 +171,13 @@ class SnakeGame:
                 move = i
         return move
 
-    def board_reset(self, board):
+    def board_reset(self, snake, board):
         for i in range(self.width):
             for j in range(self.height):
                 temp = (i, j)
                 if self.food == temp:
                     board[temp] = 0
-                elif temp not in self.snake:
+                elif temp not in snake:
                     board[temp] = (self.width + 1) * (self.height + 1)
                 else:
                     board[temp] = 2 * (self.width + 1) * (self.height + 1)
@@ -192,8 +194,16 @@ class SnakeGame:
         while not food_eaten:
             self.can_get_food(self.tempb)
             move = self.short_path(self.tmps, self.tempb)
-
-
+            temphead  = self.test_move(self.temps, move)
+            self.temps.insert(0, temphead)
+            if temphead == self.food:
+                self.board_reset(self.temps, self.tempb)
+                self.tempb[self.food] = 2 * (self.width + 1) * (self.height + 1)
+                food_eaten = True
+            else:
+                tail = self.temps.pop()
+                self.tempb[tail] = (self.width + 1) * (self.height + 1)
+                self.tempb[temphead] = 2 * (self.width + 1) * (self.height + 1)
 
     def paint(self):
         self.canvas.delete(ALL)

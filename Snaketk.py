@@ -72,35 +72,56 @@ class SnakeGame:
         if self.refresh > currentLoop:
             return
         if self.Run is True:
-            self.move()
+            '''self.Run = self.move()
             if self.Run is True:
+                self.paint()'''
+            temphead = self.test_move(self.snake[0], self.di)
+            if temphead in self.snake:
+                print("Entered")
+                self.Run = False
+            if self.Run is True:
+                self.snake.insert(0, temphead)
+                if temphead != self.food:
+                    self.snake.pop()
+                else:
+                    self.create_food()
+                    self.size += 1
                 self.paint()
             self.root.after(self.speed, lambda cur=currentLoop: self.game_begin(cur))
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red", font=("Helvetica", 30), text="Game Over")
 
-    def move(self):
-        self.di = self.find_move()
-        if self.di == "E" and self.head[0] != self.width:
-            self.head = (self.head[0] + 1, self.head[1])
-        elif self.di == "W" and self.head[0] != 0:
-            self.head = (self.head[0] - 1, self.head[1])
-        elif self.di == "N" and self.head[1] != 0:
-            self.head = (self.head[0], self.head[1] - 1)
-        elif self.di == "S" and self.head[1] != self.height:
-            self.head = (self.head[0], self.head[1] + 1)
+    '''def move(self, direct, snake):
+        head = snake[0]
+        if direct == "E" and head[0] != self.width:
+            head = (head[0] + 1, self.head[1])
+        elif direct == "W" and self.head[0] != 0:
+            head = (head[0] - 1, self.head[1])
+        elif direct == "N" and self.head[1] != 0:
+            head = (head[0], self.head[1] - 1)
+        elif direct == "S" and self.head[1] != self.height:
+            head = (head[0], self.head[1] + 1)
         else:
-            self.Run = False
-            return
-        if self.head in self.snake:
-            self.Run = False
-            return
-        self.snake.insert(0, self.head)
-        if self.head != self.food:
-            self.snake.pop()
+            return False
+        if head in snake:
+            return False
+        snake.insert(0, head)
+        if head != self.food:
+            snake.pop()
         else:
             self.create_food()
-            self.size += 1
+            self.tempsize += 1'''
+
+    def test_move(self, head, direct):
+        if direct == "E" and head[0] != self.width:
+            head = (head[0] + 1, head[1])
+        elif direct == "W" and head[0] != 0:
+            head = (head[0] - 1, head[1])
+        elif direct == "N" and head[1] != 0:
+            head = (head[0], head[1] - 1)
+        elif direct == "S" and head[1] != self.height:
+            head = (head[0], head[1] + 1)
+        return head
 
     def paint(self):
         self.canvas.delete(ALL)
