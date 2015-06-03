@@ -3,7 +3,7 @@ from random import randrange
 from copy import deepcopy
 
 
-class SnakeGame:
+class SnakeGame():
     def __init__(self):
         self.root = Tk()
         self.Run = False
@@ -41,6 +41,7 @@ class SnakeGame:
     def start_ai(self):
         self.refresh += 1
         self.Run = True
+        # self.points = 0
 
         self.speed = 50
         self.size = 6
@@ -87,13 +88,15 @@ class SnakeGame:
                     self.di = newmove
 
                 file.write("next: ")
-                file.write(str(self.board))
-
+                currentState = "Current head position: "+ str(self.nexthead)+ ", Now move to: " + self.di
+                file.write(currentState)
+                print(currentState)
                 self.nexthead = self.test_move(self.snake[0], self.di)
-                # print("Current head position: "+ str(self.nexthead)+ ", Now move to: " + self.di)
                 self.paint_ai()
+            else:
+                file.close()
+                self.paint()
             self.root.after(self.speed, lambda cur=currentLoop: self.game_begin_ai(cur, file))
-
         else:
             self.canvas.create_text(self.width // 2 * self.bsize, self.height // 2 * self.bsize, fill="red",
                                     font=("Helvetica", self.width // 2), text="Game Over")
@@ -101,6 +104,7 @@ class SnakeGame:
     def start_human(self):
         self.refresh += 1
         self.Run = True
+        # self.points = 0
         self.speed = 150
         self.size = 3
         self.snake = []
@@ -138,6 +142,7 @@ class SnakeGame:
                 self.paint()'''
             temphead = self.test_move(self.snake[0], self.di)
             if temphead in self.snake:
+                #print("Entered")
                 self.Run = False
             if self.Run is True:
                 self.snake.insert(0, temphead)
@@ -329,7 +334,5 @@ class SnakeGame:
 def t2coord(tp, bsize):
     return tp[0]*bsize, tp[1]*bsize, (tp[0]+1)*bsize, (tp[1]+1)*bsize
 
-#file = open("snake_data.txt", "w")
 
 app = SnakeGame()
-
